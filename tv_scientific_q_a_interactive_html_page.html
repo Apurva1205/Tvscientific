@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apurva Chavan — tvScientific Q&A</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --card:#101720; --muted:#9fb0c3; --text:#e6eef8; --accent:#7bdcff; --chip:#203040; --border:#1e2a38; --ok:#6ee7b7; --warn:#fbbf24;
+    }
+    [data-theme="light"]{
+      --bg:#f6f9fc; --card:#ffffff; --muted:#546778; --text:#0e1b2b; --accent:#087ea4; --chip:#eaf4ff; --border:#e6eef8; --ok:#16a34a; --warn:#b45309;
+    }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;}
+    .wrap{max-width:1040px;margin:36px auto;padding:0 16px;}
+    .hero{display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}
+    .title{font-size:28px;margin:0}
+    .subtitle{margin:6px 0 0;color:var(--muted)}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{background:var(--chip);color:var(--text);border:1px solid var(--border);padding:4px 10px;border-radius:999px;font-size:12px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+    .controls{display:flex;gap:10px;flex-wrap:wrap}
+    button{background:transparent;border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer;transition:.2s border-color, .2s transform}
+    button:hover{border-color:var(--accent);transform:translateY(-1px)}
+    input[type="search"], select{flex:1;min-width:220px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;outline:none}
+    details{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));position:relative}
+    details+details{margin-top:12px}
+    summary{list-style:none;display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer}
+    summary::-webkit-details-marker{display:none}
+    .q{font-weight:700}
+    .ans{padding:0 16px 16px;color:var(--text)}
+    .meta{font-size:12px;color:var(--muted)}
+    .ok{color:var(--ok);font-weight:600}
+    .footer{margin:28px 0 60px;color:var(--muted);font-size:12px}
+    .right{margin-left:auto}
+    .badge{padding:2px 8px;border:1px solid var(--border);border-radius:999px;font-size:12px;color:var(--muted)}
+    .cta{background:var(--accent);color:#001018;border:none}
+    .small{font-size:12px;color:var(--muted)}
+    .hidden{display:none !important}
+    .grid{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:820px){.grid{grid-template-columns:1fr 1fr}}
+    @media print{button,.controls,.chips,#sidebar{display:none !important}; .card{box-shadow:none;border-color:#ddd}}
+
+    /* Fancy touches */
+    details:hover{box-shadow:0 10px 24px rgba(0,0,0,.18)}
+    details[open]{border-color:var(--accent)}
+    .copyBtn{position:absolute;right:12px;top:12px;font-size:12px}
+    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .progress{height:8px;background:var(--chip);border-radius:999px;overflow:hidden}
+    .bar{height:100%;background:var(--accent);width:0%}
+    .pill{font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:999px;color:var(--muted)}
+    .kbd{font:12px/1.2 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;border:1px solid var(--border);padding:2px 6px;border-radius:6px;color:var(--muted)}
+    .toc{position:sticky;top:12px}
+    .layout{display:grid;grid-template-columns:1fr;gap:16px}
+    @media(min-width:1100px){.layout{grid-template-columns:240px 1fr}}
+    .toc a{display:block;color:var(--muted);text-decoration:none;padding:6px 8px;border-radius:10px}
+    .toc a.active{color:var(--text);background:var(--chip);border:1px solid var(--border)}
+    .switch{display:inline-flex;gap:8px;align-items:center}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div>
+        <h1 class="title">Apurva Ravikar Chavan — Screening Q&A</h1>
+        
+        <div class="chips">
+          <span class="chip">Python</span>
+          <span class="chip">PyTorch</span>
+          <span class="chip">MLOps</span>
+          <span class="chip">Forecasting</span>
+          <span class="chip">NLP</span>
+          <span class="chip">Experimentation</span>
+        </div>
+      </div>
+      <div class="controls">
+        
+        <select id="cat">
+          <option value="all">All categories</option>
+          <option value="background">Background</option>
+          <option value="foundations">Foundations</option>
+          <option value="mlops">MLOps</option>
+          <option value="ethics">Ethics</option>
+          <option value="challenges">Challenges</option>
+        </select>
+        <button id="expand" title="e">Expand all</button>
+        <button id="collapse" title="c">Collapse all</button>
+        
+        <button id="print" class="cta">Print / Save PDF</button>
+        <span class="switch">
+          <label class="pill" for="detailToggle">Concise</label>
+          <input id="detailToggle" type="checkbox"/>
+          <label class="pill" for="detailToggle">Detailed</label>
+        </span>
+        <button id="theme" title="t">Theme</button>
+      </div>
+    </header>
+
+    <section class="card toolbar">
+      <span class="pill">Questions reviewed: <b id="reviewed">0</b>/<b id="total">0</b></span>
+      <div class="progress" style="flex:1;min-width:160px"><div class="bar" id="bar"></div></div>
+      <span class="pill">Shortcuts: <span class="kbd">e</span> expand · <span class="kbd">c</span> collapse · <span class="kbd">t</span> theme</span>
+    </section>
+
+    <div class="layout">
+      <aside id="sidebar" class="toc card">
+        <div class="small" style="margin-bottom:8px">Jump to</div>
+        <nav id="tocLinks"></nav>
+      </aside>
+
+      <main>
+        
+
+        <section aria-label="Q&A" id="qa">
+          
+          <!-- 1 -->
+          <details data-cat="background" open>
+            <summary><span class="q">1) Are you currently employed?</span><span class="right badge">Status</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-concise>
+              Yes — interning as a Data Scientist (research‑focused) at Ideatrix Cogn AI Lab while pursuing full‑time roles.
+            </div>
+            <div class="ans hidden" data-detailed>
+              Currently interning as a Data Scientist (research‑focused) at Ideatrix Cogn AI Lab. I balance R&D with delivery: prototyping forecasting/NLP workflows in PyTorch, writing clean ETL in Python/SQL, and documenting results for rapid hand‑off — while actively interviewing for full‑time roles.
+            </div>
+          </details>
+
+          <!-- 2 -->
+          <details data-cat="foundations">
+            <summary><span class="q">2) Supervised vs. Unsupervised learning</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Explanation.</strong> Supervised learning optimizes a loss against known targets (e.g., cross‑entropy for conversions). Unsupervised learning discovers structure in unlabeled data (clustering, density modeling, dimensionality reduction) and can feed supervised tasks via features or pre‑training.</p>
+              <p><strong>Example (ad tech).</strong> Use supervised models to predict the probability of a site visitor converting after a TV ad impression; use unsupervised clustering on engagement signals to discover high‑value audience segments and feed those segment IDs as features to the converter.</p>
+              <p><strong>How I’d approach.</strong> Start with a supervised baseline (regularized logistic/GBM) on clean labels; in parallel, run K‑Means/HDBSCAN on behavior features (recency/frequency, dwell time) to create segments; evaluate whether adding segment features improves AUC‑PR/CPA; iterate by pretraining embeddings (autoencoder/SimCLR‑style) if sparse signals dominate.</p>
+            </div>
+          </details>
+
+          <!-- 3 -->
+          <details data-cat="foundations">
+            <summary><span class="q">3) How a decision tree works</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Explanation.</strong> A tree does greedy, top‑down splits that maximize impurity reduction (Gini/entropy). Leaves hold predictions; depth/leaf size/pruning regularize variance.</p>
+              <p><strong>Example.</strong> For conversion prediction, early splits might be on "minutes since ad exposure" and "device type", capturing non‑linear interactions. A small depth avoids memorizing campaign IDs.</p>
+              <p><strong>How I’d approach.</strong> Start with gradient‑boosted trees (LightGBM/XGBoost) with monotonic constraints if needed; perform stratified CV; tune learning rate, num_leaves, min_data_in_leaf; add calibrated probabilities (isotonic/Platt) and evaluate business metrics (lift @ spend, CPA).</p>
+            </div>
+          </details>
+
+          <!-- 4 -->
+          <details data-cat="foundations">
+            <summary><span class="q">4) Handling imbalanced datasets</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Explanation.</strong> Rare positives bias accuracy‑style metrics. Use resampling (SMOTE/undersample), re‑weighting, focal loss, and threshold tuning with cost‑aware metrics.</p>
+              <p><strong>Example.</strong> Only 0.5% viewers convert after a TV ad. I train a GBM with class weights, evaluate on AUC‑PR and recall@K, then adjust thresholds to meet CPA targets.</p>
+              <p><strong>How I’d approach.</strong> Establish a plain logistic baseline and a GBM with weights; add domain features (time‑since‑ad, channel frequency caps); compare SMOTE vs. weights; calibrate scores; choose an operating point using a profit curve; lock with stratified/group CV to prevent leakage across campaigns.</p>
+            </div>
+          </details>
+
+          <!-- 5 -->
+          <details data-cat="foundations">
+            <summary><span class="q">5) Handling missing data</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Explanation.</strong> Identify MCAR/MAR/MNAR. Impute with robust stats (median/mode), model‑based methods, and add missingness indicators when predictive. Prefer algorithms tolerant to NAs (trees).</p>
+              <p><strong>Example.</strong> Device type is missing for 12% of events. I encode a missing flag, impute with mode for linear models, and compare against a tree method that natively handles NAs.</p>
+              <p><strong>How I’d approach.</strong> Profile missingness by feature × segment; try simple imputations first; run sensitivity analysis (multiple imputations); select approach that minimizes downstream metric loss while keeping pipelines simple and explainable.</p>
+            </div>
+          </details>
+
+          <!-- 6 -->
+          <details data-cat="foundations">
+            <summary><span class="q">6) Preventing overfitting</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Explanation.</strong> Control model capacity and validate properly. Techniques: regularization, early stopping, dropout (NNs), pruning (trees), feature curation, and leakage checks.</p>
+              <p><strong>Example.</strong> A deep net overfits sparse view events. Switching to GBM with early stopping and stronger feature selection improves PR‑AUC and generalization.</p>
+              <p><strong>How I’d approach.</strong> Use nested CV; set conservative early‑stopping; remove leaky features (post‑event signals); add noise/augmentation when appropriate; conduct ablation to keep only features that add stable lift across folds.</p>
+            </div>
+          </details>
+
+          <!-- 7 -->
+          <details data-cat="background">
+            <summary><span class="q">7) Real‑world ML project</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Time‑Series Energy Forecasting.</strong> I built short‑term load forecasts (ARIMA/LSTM) that feed planning & anomaly detection; versioned artifacts/schemas; metrics to dashboards; reduced MAPE ~8–12% vs baseline and cut inference latency via vectorized preprocessing. Containerized the service and added retraining + drift monitors.</p>
+              <p><strong>Related projects (1‑line each):</strong></p>
+              <ul>
+                <li><a href="https://github.com/Apurva1205/AI-RESUME-ENHANCER" target="_blank" rel="noopener">AI‑RESUME‑ENHANCER</a> — NLP embeddings and skill‑gap mining to match resumes to job descriptions with transparent scoring.</li>
+                <li><a href="https://github.com/Apurva1205/Time-Series-Forecasting-For-Energy-Consumption" target="_blank" rel="noopener">Time‑Series Forecasting for Energy Consumption</a> — ARIMA/LSTM pipelines for demand forecasting with retraining and anomaly surfacing.</li>
+                <li><a href="https://github.com/Apurva1205/Sales-Ad-Optimization" target="_blank" rel="noopener">Sales‑Ad‑Optimization</a> — predictive modeling and budget‑allocation experiments to improve conversion efficiency.</li>
+                <li><a href="https://github.com/Apurva1205/Analyzing-Airbnb-Listings-Data" target="_blank" rel="noopener">Analyzing Airbnb Listings Data</a> — EDA + pricing models highlighting drivers of nightly rates and occupancy.</li>
+              </ul>
+            </div>
+          </details>
+
+          <!-- 8 -->
+          <details data-cat="challenges">
+            <summary><span class="q">8) Challenges & remedies</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Non‑stationarity & drift (Energy forecasting).</strong> Demand shifted with holidays, weather spikes, and DST. <em>Remedies:</em> added calendar/weather/exogenous features, per‑region models, time‑based CV, PSI/KS feature drift alerts, and weekly retraining—helped drive the ~8–12% MAPE improvement already noted.</p>
+              <p><strong>Delayed & noisy labels (Ads/Resume NLP).</strong> Conversions arrive late and resume–JD “fit” labels are subjective. <em>Remedies:</em> used time‑lagged labels with right‑censoring windows, time‑ordered validation, and “silver” labels from heuristic matchers; spot‑checked samples and smoothed training with label‑quality weights.</p>
+              <p><strong>Class imbalance & sparsity.</strong> Positives &lt;1% for conversions; long‑tail resumes/skills. <em>Remedies:</em> class weights/focal loss, PR‑AUC/recall@K as primary metrics, threshold tuning to CPA/precision targets, top‑K ranking for retrieval, and isotonic calibration for reliable scores.</p>
+              <p><strong>Data quality & schema drift.</strong> Upstream changed device enums / missing cols broke pipelines. <em>Remedies:</em> Great Expectations + Pydantic schema checks, freshness SLAs, and data contracts; fail‑fast with alerts; versioned datasets and backfills for safe re‑training.</p>
+              <p><strong>Latency & cost at serving.</strong> Early prototypes had heavy Python preprocessing. <em>Remedies:</em> vectorized feature prep, LightGBM for tabular tasks, cached features, and containerized FastAPI with autoscaling; reduced p95 latency while keeping throughput budget‑friendly.</p>
+              <p><strong>Explainability & stakeholder alignment.</strong> Hard to tie model lift to outcomes. <em>Remedies:</em> SHAP summaries + feature cards, dashboards that map MAE/MAPE to $ impact (ROAS/CPA proxies), and weekly readouts to prioritize next experiments.</p>
+            </div>
+          </details>
+
+          <!-- 9 -->
+          <details data-cat="foundations">
+            <summary><span class="q">9) Choosing algorithms</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Explanation.</strong> Match algorithm to objective, data shape, and operational constraints (latency, interpretability, cost).</p>
+              <p><strong>Example.</strong> For campaign pacing, GBMs on tabular logs deliver strong accuracy under tight latency; for creative selection, a contextual bandit balances explore‑exploit with budget constraints.</p>
+              <p><strong>How I’d approach.</strong> Establish a linear/GBM baseline; capture constraints (SLOs, memory); run a model matrix (linear, GBM, NN/bandit where relevant) with the same CV; compare on quality & runtime; prefer the simplest model that hits KPI and is easiest to operate.</p>
+            </div>
+          </details>
+
+          <!-- 10 -->
+          <details data-cat="foundations">
+            <summary><span class="q">10) Languages for ML</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-concise>
+              Python + SQL; R familiarity; Git/Linux fluency.
+            </div>
+            <div class="ans hidden" data-detailed>
+              Python (pandas/NumPy/scikit‑learn/PyTorch) for modeling; SQL for data shaping; R for quick stats; Docker + CLI for reliable builds.
+            </div>
+          </details>
+
+          <!-- 11 -->
+          <details data-cat="foundations">
+            <summary><span class="q">11) Framework experience</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-concise>
+              Extensive PyTorch; broad scikit‑learn; some TensorFlow.
+            </div>
+            <div class="ans hidden" data-detailed>
+              PyTorch for LSTM/NLP and training loops; scikit‑learn for pipelines & metrics; TensorFlow when interop warranted.
+            </div>
+          </details>
+
+          <!-- 12 -->
+          <details data-cat="mlops">
+            <summary><span class="q">12) Deploying ML to production</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Explanation.</strong> Package, serve, observe, and iterate with clear contracts.</p>
+              <p><strong>Example.</strong> Containerized a FastAPI model server with Git‑versioned artifacts, Prometheus metrics (latency, error rate, drift PSI), and blue‑green deploys; added canaries to guard CPA.</p>
+              <p><strong>How I’d approach (30‑60‑90).</strong></p>
+              <ul>
+                <li><em>Day 0–30:</em> Repro training pipeline; feature schema; unit tests; container build; staging endpoint; basic dashboards.</li>
+                <li><em>Day 31–60:</em> Add drift/calibration checks, canary deploy; define SLOs & alerts; cost profiling.</li>
+                <li><em>Day 61–90:</em> Hardening (retries/backoff), autoscaling; A/B test tied to ROAS/CPA; runbook & rollback.</li>
+              </ul>
+            </div>
+          </details>
+
+          <!-- 13 -->
+          <details data-cat="ethics">
+            <summary><span class="q">13) Ethical concerns</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Explanation.</strong> Key risks: privacy/consent, fairness, transparency, security/abuse, feedback loops.</p>
+              <p><strong>Example.</strong> Avoid building proxy features that re‑encode protected attributes in targeting; document data usage and opt‑outs.</p>
+              <p><strong>How I’d approach.</strong> Data minimization and access controls; fairness tests on subgroups; SHAP/explanations where impactful; human‑in‑the‑loop for sensitive decisions; periodic audits and incident playbooks.</p>
+            </div>
+          </details>
+
+          <!-- 14 -->
+          <details data-cat="ethics">
+            <summary><span class="q">14) Handling bias</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Explanation.</strong> Measure disparities, mitigate during/after training, and monitor post‑deploy.</p>
+              <p><strong>Example.</strong> If false‑positive rates differ across segments, apply re‑weighting or threshold adjustment while meeting policy/Legal requirements.</p>
+              <p><strong>How I’d approach.</strong> Define fairness metrics (e.g., equalized odds deltas), run re‑weighting or constrained optimization, calibrate per segment if allowed, and monitor with alerts + periodic reviews.</p>
+            </div>
+          </details>
+
+          <!-- 15 -->
+          <details data-cat="ethics">
+            <summary><span class="q">15) Ensuring fairness</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Explanation.</strong> Turn values into verifiable tests and governance.</p>
+              <p><strong>Example.</strong> For a converter, set subgroup recall floors and monitor drift; gate deploys on passing fairness checks.</p>
+              <p><strong>How I’d approach.</strong> Co‑define policy‑aligned metrics with stakeholders; add pre‑release fairness CI; publish a model card; schedule quarterly audits and incident response paths.</p>
+            </div>
+          </details>
+
+          <!-- 16 -->
+          <details data-cat="foundations">
+            <summary><span class="q">16) Recent ML advances you follow</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Explanation.</strong> Conformal prediction for calibrated risk; causal uplift for targeting; bandits for explore‑exploit; continual learning for drift.</p>
+              <p><strong>Example.</strong> Add split‑conformal intervals to TV‑driven site‑traffic forecasts so pacing systems react to uncertainty, not just point estimates.</p>
+              <p><strong>How I’d approach.</strong> Pilot conformal wrappers on a high‑impact forecast; instrument whether interval‑aware decisions improve ROAS variance; roll out behind a feature flag.</p>
+            </div>
+          </details>
+
+          <!-- 17 -->
+          <details data-cat="foundations">
+            <summary><span class="q">17) New techniques you tried recently</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Explanation.</strong> I prototyped split‑conformal for time‑series forecasts and contextual bandits for creative/ranking choices; also built resume↔job matching with sentence embeddings.</p>
+              <p><strong>Example.</strong> Compared Thompson Sampling vs. UCB for selecting creatives under budget; measured uplift vs. fixed A/B rotation.</p>
+              <p><strong>How I’d approach.</strong> Define offline policy‑evaluation (IPS/DR) to vet bandits; run a low‑risk online pilot with guardrails; document lessons and expand to more surfaces if metrics move.</p>
+            </div>
+          </details>
+
+          <!-- 18 -->
+          <details data-cat="foundations">
+            <summary><span class="q">18) Staying current</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-concise>
+              Papers/blogs, conference tracks, MLOps/DS communities, and small repros.
+            </div>
+            <div class="ans hidden" data-detailed>
+              Maintain a weekly digest; run quick notebooks to test ideas; share write‑ups for team learning.
+            </div>
+          </details>
+
+          <!-- 19 -->
+          <details data-cat="background">
+            <summary><span class="q">19) How I add value at tvScientific</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-concise>
+              Prod ML & MLOps; ad‑tech decisioning (forecasting/anomaly/experiments); clear communication to KPIs.
+            </div>
+            <div class="ans hidden" data-detailed>
+              Ship reliable services with clear SLOs; translate model lift into ROAS/CPA impact; partner cross‑functionally to de‑risk launches.
+            </div>
+          </details>
+
+          <!-- 20 -->
+          <details data-cat="background">
+            <summary><span class="q">20) Desired hourly rate</span></summary>
+            <button class="copyBtn">Copy</button>
+            <div class="ans" data-detailed>
+              <p><strong>Target range:</strong> $60–$65/hour. I calibrate to scope and impact, and I’m open to discussing structure (bonus/equity) if that better fits your bands.</p>
+              <p><strong>Why this range fits my profile</strong></p>
+              <ul>
+                <li><em>Production ML & MLOps:</em> I ship containerized FastAPI/Flask services with CI/CD, monitoring, and drift checks; this reduces time‑to‑deploy and support load.</li>
+                <li><em>Applied modeling:</em> Built ARIMA/LSTM forecasts and NLP/embedding systems; on a prior project, improved MAPE ~8–12% vs baseline and cut inference latency via vectorized preprocessing.</li>
+                <li><em>Data rigor:</em> SQL/pandas pipelines, feature contracts, and experiment readouts that tie model lift to business KPIs (e.g., ROAS/CPA proxies).</li>
+              </ul>
+              <p><strong>How I’d approach the conversation (examples)</strong></p>
+              <ol>
+                <li><em>Clarify scope</em>: If the role is heavier on MLOps/ownership (on‑call, SLAs, cost optimization), I’d anchor near the top of the range. If it’s narrower in scope, I’m comfortable closer to $60.</li>
+                <li><em>Define early milestones</em>: e.g., within 30–45 days, stand up a reproducible training pipeline with drift monitoring; by 60–90 days, ship a calibrated model to staging with dashboards. I’m open to a compensation review after milestone delivery.</li>
+                <li><em>Choose pay mix</em>: Primarily hourly, but open to a small sign‑on or performance bonus in lieu of rate adjustments if that better fits budget cycles.</li>
+              </ol>
+              <p><strong>Flexibility</strong></p>
+              <p>If the team prefers a narrower scope to start, I can align at $58–$60/hour with a written 60‑day review tied to agreed KPIs. Conversely, for high‑ownership delivery (production SLAs, cross‑team leadership), $65/hour reflects the added responsibility.</p>
+            </div>
+          </details>
+
+        </section>
+
+        <section class="footer">
+          <p>Tip: Answers are in <em>Detailed</em> mode. Use <em>Print / Save PDF</em> to attach with your application.</p>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Interview mode dialog -->
+  
+
+  <script>
+    // timestamp
+    (function(){
+      const el = document.getElementById('updated');
+      if (el) {
+        try {
+          el.textContent = new Date().toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+        } catch(e) {
+          el.textContent = 'Oct 16, 2025';
+        }
+      }
+    })();
+
+    // Elements
+    const search = document.getElementById('search');
+    const cat = document.getElementById('cat');
+    const blocks = Array.from(document.querySelectorAll('#qa details'));
+    const totalEl = document.getElementById('total');
+    const reviewedEl = document.getElementById('reviewed');
+    const bar = document.getElementById('bar');
+    const tocLinks = document.getElementById('tocLinks');
+
+    totalEl.textContent = blocks.length;
+
+    // Build TOC
+    blocks.forEach((d,i)=>{
+      const id = 'q'+(i+1);
+      d.id = id;
+      const a = document.createElement('a');
+      a.href = '#'+id;
+      a.textContent = d.querySelector('.q').textContent;
+      tocLinks.appendChild(a);
+    });
+
+    const tocAnchors = Array.from(tocLinks.querySelectorAll('a'));
+
+    // Observe active section
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          tocAnchors.forEach(x=>x.classList.remove('active'));
+          const a = tocAnchors.find(x=> x.getAttribute('href') === '#'+e.target.id);
+          if(a) a.classList.add('active');
+        }
+      })
+    }, {rootMargin:'-40% 0px -55% 0px'});
+    blocks.forEach(b=>io.observe(b));
+
+    // Search filter
+    function applyFilters(){
+      const q = search ? search.value.toLowerCase() : ''; 
+      const c = cat.value;
+      let visible = 0;
+      blocks.forEach(d => {
+        const txt = d.innerText.toLowerCase();
+        const matchText = !q || txt.includes(q);
+        const matchCat = c==='all' || d.dataset.cat===c;
+        const vis = matchText && matchCat;
+        d.classList.toggle('hidden', !vis);
+        if(vis) visible++;
+      });
+      totalEl.textContent = visible;
+      updateReviewed();
+    }
+    if (search) search.addEventListener('input', applyFilters);
+    cat.addEventListener('change', applyFilters);
+
+    // Expand / collapse
+    const expand = document.getElementById('expand');
+    const collapse = document.getElementById('collapse');
+    expand.onclick = () => blocks.forEach(d => d.open = true);
+    collapse.onclick = () => blocks.forEach(d => d.open = false);
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e)=>{
+      
+      if(e.key.toLowerCase() === 'e'){ expand.click(); }
+      if(e.key.toLowerCase() === 'c'){ collapse.click(); }
+      if(e.key.toLowerCase() === 't'){ document.getElementById('theme').click(); }
+    });
+
+    // Copy buttons
+    document.querySelectorAll('.copyBtn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const d = btn.parentElement;
+        const text = (d.querySelector('[data-detailed]:not(.hidden)') || d.querySelector('[data-concise]')).innerText.trim();
+        navigator.clipboard.writeText(text).then(()=>{
+          btn.textContent = 'Copied!';
+          setTimeout(()=>btn.textContent='Copy',900);
+        });
+      });
+    });
+
+    // Concise / Detailed toggle
+    const detailToggle = document.getElementById('detailToggle');
+    function setDetailMode(on){
+      blocks.forEach(d=>{
+        const concise = d.querySelector('[data-concise]');
+        const detailed = d.querySelector('[data-detailed]');
+        if(!concise || !detailed) return;
+        concise.classList.toggle('hidden', on);
+        detailed.classList.toggle('hidden', !on);
+      });
+      localStorage.setItem('detail', on?'1':'0');
+    }
+    detailToggle.addEventListener('change', ()=> setDetailMode(detailToggle.checked));
+    // init
+    if(localStorage.getItem('detail')==='1'){ detailToggle.checked = true; }
+    // Force detailed answers & open all; hide the toggle UI
+    detailToggle.checked = true; setDetailMode(true);
+    try { document.querySelector('.switch').style.display='none'; } catch(_){ }
+    blocks.forEach(d=> d.open = true);
+
+    // Reviewed meter
+    function updateReviewed(){
+      const visBlocks = blocks.filter(d=>!d.classList.contains('hidden'));
+      const reviewed = visBlocks.filter(d=>d.open).length;
+      reviewedEl.textContent = reviewed;
+      const total = visBlocks.length || 1;
+      bar.style.width = Math.round(100*reviewed/total)+"%";
+    }
+    blocks.forEach(d=> d.addEventListener('toggle', updateReviewed));
+    applyFilters();
+
+    // Print
+    document.getElementById('print').onclick = () => window.print();
+
+    // Theme toggle
+    const themeBtn = document.getElementById('theme');
+    function applyTheme(){
+      const t = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    }
+    themeBtn.onclick = ()=>{
+      const cur = localStorage.getItem('theme') || 'dark';
+      const nxt = cur==='dark'?'light':'dark';
+      localStorage.setItem('theme', nxt); applyTheme();
+    }
+    applyTheme();
+  </script>
+</body>
+</html>
